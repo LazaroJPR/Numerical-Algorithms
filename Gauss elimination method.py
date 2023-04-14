@@ -27,31 +27,37 @@ def eliGauss(A,n,b):
 
 def main():
   #Eliminacao de Gauss
-  A = [1, -3, 2], [-2, 8, -1], [4, -6, 5]
+  A = [[1, -3, 2], 
+       [-2, 8, -1], 
+       [4, -6, 5]]
   B = [11, -15, 29]
   n = 3
-  print ("\nEliminacao de Gauss:")
-  print ("Matriz inicial:")
-  print (A)
-  print ("\nVetor independente:")
+  print ("\n_____ ELIMINACAO DE GAUSS 1 _____")
+  print ("_____ Matriz Inicial ______")
+  for j in A: print('\t'.join(map(str, j)))
+  print ("_____ Vetor Independente ______")
   print (B)
-  print ("\nOrdem:")
+  print ("_____ Ordem ______")
   print (n)
-  print(eliGauss(A, n, B))
-  print ("\nResultado:")
+  print ("_____ RESULTADO ______")
+  eliGauss(A, n, B)
   print(subsRetroativa(n, A, B))
   
-  print ("\nSubstituicao retroativa:")
-  C = [5, -2, 6, 1], [0, 3, 7, -4], [0, 0, 4, 5], [0, 0, 0, 2]
+  print ("\n_____ SUBSTITUICAO RETROATIVA _____")
+  C = [[5, -2, 6, 1], 
+       [0, 3, 7, -4], 
+       [0, 0, 4, 5], 
+       [0, 0, 0, 2]]
   D = [1, -2, 28, 8]
   m = 4
-  print ("Matriz inicial:")
-  print (C)
-  print ("\nVetor independente:")
+  
+  print ("_____ Matriz Inicial ______")
+  for k in C: print('\t'.join(map(str, k)))
+  print ("_____ Vetor Independente ______")
   print (D)
-  print ("\nOrdem:")
+  print ("_____ Ordem ______")
   print (m)
-  print ("\nResultado:")
+  print ("_____ RESULTADO ______")
   print(subsRetroativa(m, C, D))
   
 main()
