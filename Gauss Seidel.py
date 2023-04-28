@@ -1,37 +1,27 @@
 #Implementação Método Iterativo Gauss Seidel
 #Autor: lazaro jose Pedrosa dos Reis
 #2023
-import math
 
-#Funcao que determina se o sistema deve parar de ser resolvido
-#x = vetor solucao | anterior = vetor solucao anterior | e = tolerancia
-def parada(x,anterior,e):
-    for i in range(len(x)):
-        if math.fabs(x[i] - anterior[i]) > e:
-            return False
-    return True
-
-#Funcao principal da resolucao do Gauss Seidel
-#A = Matriz | b = vetor independente | e = tolerancia | iteracoes = numero de iteracoes
+#Funcao que calcula o resultado do metodo de Gauss Seidel
+#A = matriz | b = vetor de termos independentes | e = valor de tolerancia | iteracoes = numero de iteracoes
 def gaussSeidel(A,b,e,iteracoes):
     n = len(b)
     x = [0]*n
-    k = 0
-    for i in range(n):
-        x[i] = 0
-    anterior = x.copy() #vetor solucao anterior
-    
-    while k < iteracoes:
-        k = k+1
-        for i in range(n):
-            s = 0
-            for j in range(n):
-                if i != j:
-                    s = s + A[i][j]*x[j]
-            x[i] = (b[i] - s)/A[i][i]
-        if parada(x,anterior,e):
-            break
-        anterior = x.copy()
+    xa = x.copy()   #Vetor anterior ao vetor x, serve para armazenar os valores de x antes de serem atualizados
+                    #para que os valores possam ser recuperados para executar o metodo de Gauss Seidel
+    for i in range(iteracoes):
+        for j in range(len(A)):
+            soma = 0
+            for k in range(len(A)):
+                if j > k:
+                    soma = soma + A[j][k] * xa[k]
+                elif j < k:
+                    soma = soma + A[j][k] * x[k]
+            xa[j] = (b[j] - soma) / A[j][j]
+        if e > abs(xa[0] - x[0]) and e > abs(xa[1] - x[1]) and e > abs(xa[2] - x[2]): #Teste de parada
+            x = xa.copy()
+            return x
+        x = xa.copy()
     return x
         
 def main():
@@ -41,6 +31,20 @@ def main():
     b = [5,6,0]
     e = 0.05
     iteracoes = 1000
-    print(gaussSeidel(A,b,e,iteracoes))
+    print("____ALGORITMO DE GAUSS SEIDEL_____\n")
+    print("Matriz A: ")
+    for k in A: print('\t'.join(map(str, k)))
+    print("\nVetor b: ")
+    print(b)
+    print("\nValor de tolerância: ")
+    print(e)
+    print("\nNúmero de iterações: ")
+    print(iteracoes)
+    print("\nResultado: ")
+    res = gaussSeidel(A,b,e,iteracoes)
+    print(res)
+    print("\nResultado com arredondamento: ")
+    print(round(res[0],2),round(res[1],2),round(res[2],2))
+    print("\n____________________________________")
 
 main()
