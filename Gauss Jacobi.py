@@ -2,6 +2,8 @@
 #Autor: lazaro jose Pedrosa dos Reis
 #2023
 
+#Função que calcula o resultado de uma iteração do método de Gauss-Jacobi
+#A = matriz de coeficientes| b  = vetor de termos independentes| x = vetor de termos iniciais| iteracoes = nÃmero de iteraçÕes| e = tolerância
 def gaussJacobi(A,b,x,iteracoes,e):
     for i in range(iteracoes):
         for j in range(len(A)):
@@ -10,7 +12,7 @@ def gaussJacobi(A,b,x,iteracoes,e):
                 if k != j:
                     soma += A[j][k] * x[k]
             x[j] = (b[j] - soma) / A[j][j]
-        if e > abs(x[0] - x[1]) and e > abs(x[1] - x[2]):
+        if e > abs(x[0] - x[1]) and e > abs(x[1] - x[2]): #Teste de parada
             return x
     return x
         
