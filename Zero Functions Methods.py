@@ -2,63 +2,161 @@
 #Autor: lazaro jose Pedrosa dos Reis
 #2023
 
+import sympy
+
 #Funcao que estima os zeros de uma funcao atravez do metodo de bissecao
-def metodoBissecao(f, a, b, tol):
+def metodoBissecao(polinomio, a, b, tol):
+    print("_____________________________________________")
     print("Intervalo:", a, "-", b)
     print("Tolerancia:", tol)
-    print("Resultado: ")
+    print("Polinomio:", polinomio)  
+    print("_____________________________________________")
     
-    if (f(a)*f(b) >= 0):
+    if (f(polinomio, a)*f(polinomio, b) >= 0):
         print("Nao existe raiz no intervalo")
         return
     
-    while (abs(f(a)-f(b)) > tol):
-        if(abs(f(a)) < abs(f(b))):
+    ite = 0
+    while (abs(f(polinomio, a)-f(polinomio, b)) > tol):
+        if(abs(f(polinomio, a)) < abs(f(polinomio, b))):
             b = (a+b)/2
         else: 
             a = (a+b)/2
-    #Retorna o menor valor
+        ite += 1
+        print("Passo:", ite, "Epsilon:", tol,"Valor de a:", a, "Valor de b:", b)
+        
+    print("_____________________________________________")
+    print("Numero de iteracoes:", ite)
+    print("Epsilon:", tol)
+    print("Resultado:")
     return min(a, b)
 
 #Funcao que estima os zeros de uma funcao atravez do metodo de Newton
-def metodoNewton(f, df, x0, tol):
+def metodoNewton(polinomio, df, x0, tol):
+    print("_____________________________________________")
+    print("Polinomio:", polinomio)
     print("Ponto inicial:", x0)
     print("Tolerancia:", tol)
-    print("Resultado:")
+    print("_____________________________________________")
     
     x = x0
-    while abs(f(x)) > tol:
-        x = x - f(x)/df(x)
+    ite = 0
+    while abs(f(polinomio, x)) > tol:
+        x = x - f(polinomio, x)/f(df, x)
+        ite += 1
+        print("Passo:", ite, "Epsilon:", tol, "Valor de X:", x,  "Valor de f(x):", f(polinomio, x))
+    
+    print("_____________________________________________")
+    print("Numero de iteracoes:", ite)
+    print("Epsilon:", tol)
+    print("Resultado:")
     return x
 
+#Funcao que retorna o valor de f(x)
+def f(f, valor):
+    x = sympy.symbols('x')
+    funcao = f.subs(x, valor)
+    return funcao.evalf()
+
 #Funcao que estima os zeros de uma funcao atravez do metodo de Secante
-def metodoSecante(f, x0, x1, tol):
+def metodoSecante(polinomio, x0, x1, tol):
+    print("_____________________________________________")
     print("Ponto inicial:", x0)
     print("Ponto final:", x1)
     print("Tolerancia:", tol)
-    print("Resultado:")
+    print("_____________________________________________")
     
-    x = (x0*f(x1)-x1*f(x0))/(f(x1)-f(x0))
-    while abs(f(x)) > tol:
+    ite = 0
+    x = (x0*f(polinomio,x1)-x1*f(polinomio,x0))/(f(polinomio,x1)-f(polinomio,x0))
+    while abs(f(polinomio,x)) > tol:
         x0 = x1
         x1 = x
-        x = (x0*f(x1)-x1*f(x0))/(f(x1)-f(x0))
+        x = (x0*f(polinomio,x1)-x1*f(polinomio,x0))/(f(polinomio,x1)-f(polinomio,x0))
+        ite += 1
+        print("Passo:", ite, "Epsilon:", tol, "Valor de X:", x,  "Valor de f(x):", f(polinomio, x))
+        
     
+    print("_____________________________________________")
+    print("Numero de iteracoes:", ite)
+    print("Epsilon:", tol)
+    print("Resultado:")
     return x
 
 def main():
-    print("___MÉTODO DA BISSEÇÃO___\n")
-    print("Funcao: x^3-9x+3")
-    print(metodoBissecao(lambda x: x**3-9*x+3, 0, 1, 0.1))
+    print("___IMPLEMENTAÇÃO DOS MÉTODOS DE ZEROS DA FUNÇÃO___\n")
+    print("[1] Método da Bisseção\n[2] Método do Newton\n[3] Método da Secante\n")
+    opcao = int(input("Escolha uma opção: "))
     
-    print("\n___MÉTODO DO NEWTON___\n")
-    print("Funcao: x^3-9x+3")
-    print("Derivada: 3x^2-9")
-    print(metodoNewton(lambda x: x**3-9*x+3, lambda x: 3*x**2-9, 0, 0.01))
-    
-    print("\n___MÉTODO DA SECANTE___\n")
-    print("Funcao: x^2+x-6")
-    print(metodoSecante(lambda x: x**2+x-6, 1.5, 1.7, 2))
-    return 0
+    if (opcao == 1):
+        print("___MÉTODO DA BISSEÇÃO___\n")
+        
+        print("Digite o grau do polinomio: ")
+        grau = int(input())
+        
+        print("Digite os coeficientes do polinomio: ")
+        coeficientes = []
+        for i in range(grau+1):
+            coeficientes.append(float(input()))
+            
+        print("Digite o Epsilon desejado: ")
+        tol = float(input())
+        print("Digite o intervalo desejado: ")
+        a = float(input())
+        b = float(input())
+        
+        x = sympy.symbols('x')
+        polinomio = 0
+        for i in range(grau+1):
+            polinomio = polinomio + coeficientes[i]*x**(grau-i)
+        
+        print(metodoBissecao(polinomio, a, b, tol))
+        
+    if (opcao == 2):
+        print("___MÉTODO DO NEWTON___\n")
+        
+        print("Digite o grau do polinomio: ")
+        grau = int(input())
+        
+        print("Digite os coeficientes do polinomio: ")
+        coeficientes = []
+        for i in range(grau+1):
+            coeficientes.append(float(input()))
+            
+        print("Digite o Epsilon desejado: ")
+        tol = float(input())
+        print("Digite o intervalo inicial: ")
+        a = float(input())
+        
+        x = sympy.symbols('x')
+        polinomio = 0
+        for i in range(grau+1):
+            polinomio = polinomio + coeficientes[i]*x**(grau-i)
+        
+        print(metodoNewton(polinomio, sympy.diff(polinomio), a, tol))
+        
+    if (opcao == 3):
+        print("___MÉTODO DA SECANTE___\n")
+        
+        print("Digite o grau do polinomio: ")
+        grau = int(input())
+        
+        print("Digite os coeficientes do polinomio: ")
+        coeficientes = []
+        for i in range(grau+1):
+            coeficientes.append(float(input()))
+            
+        print("Digite o Epsilon desejado: ")
+        tol = float(input())
+        print("Digite o valor de X0: ")
+        x0 = float(input())
+        print("Digite o valor de X1: ")
+        x1 = float(input())
+        
+        x = sympy.symbols('x')
+        polinomio = 0
+        for i in range(grau+1):
+            polinomio = polinomio + coeficientes[i]*x**(grau-i)
+        
+        print(metodoSecante(polinomio, x0, x1, tol))
 
 main()
