@@ -1,4 +1,4 @@
-function resolver_equacao_calor(h, B, dt, T, f1, condInicial)
+function resolver_equacao_calor(h, B, dt, T, condInicial)
     alpha = dt/h^2;
     
     Nx = (B/h + 1)-2;
@@ -96,13 +96,13 @@ function menu_EDO()
     select opcao
         case 1
             clf();
-            resolver_equacao_calor(0.25, 1, 0.25, 1, f1_func, "x * (1 - x)");
+            resolver_equacao_calor(0.25, 1, 0.25, 1, "x * (1 - x)");
         case 2
             clf();
-            resolver_equacao_calor(0.25, 1, 0.25, 1, f1_func, "x * (2 - x)");
+            resolver_equacao_calor(0.25, 1, 0.25, 1, "x * (2 - x)");
         case 3
             clf();
-            resolver_equacao_calor(0.25, 1, 0.25, 1, f1_func, "x * (x + 2)");
+            resolver_equacao_calor(0.25, 1, 0.25, 1, "x * (x + 2)");
         else
             disp("Opção inválida.");
             menu_EDO();

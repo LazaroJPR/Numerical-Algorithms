@@ -1,4 +1,4 @@
-function resolver_EDO(h, a, b, y0, yf, f1, f2, f3, f4, f1_expr, f2_expr, f3_expr, f4_expr)
+function resolver_EDO(h, a, b, y0, yf, f1_expr, f2_expr, f3_expr, f4_expr)
     n = ((b - a) / h)-1;
     x = a:h:b;
     A = zeros(n, n);
@@ -9,7 +9,7 @@ function resolver_EDO(h, a, b, y0, yf, f1, f2, f3, f4, f1_expr, f2_expr, f3_expr
     printf("\n========================================================================");
     printf("\nFunção: (%c)y(i-1) + (%c)y(i) + (%cy)(i+1) = %c", f1_expr1, f2_expr, f3_expr, f4_expr);
     printf("\nh = %0.2f", h);
-    printf("\ny0 =%0.2f", y0);
+    printf("\ny0 = %0.2f", y0);
     printf("\nx ∈ [%d,%d]", a, b);
  
     if isempty(yf) then
@@ -17,16 +17,16 @@ function resolver_EDO(h, a, b, y0, yf, f1, f2, f3, f4, f1_expr, f2_expr, f3_expr
         printf("\n               Resolvendo Problema de Valor Inicial");
         printf("\n========================================================================");
         
-        A(1, 1) = f2_func(x(2), f2_expr); 
+        A(1, 1) = f1_func(x(2), f2_expr); 
         
         for i = 2:n+1
             A(i, i-1) = f1_func(x(i+1), f1_expr);
-            A(i, i) = f2_func(x(i+1), f2_expr);
-            A(i-1, i) = f3_func(x(i+1), f3_expr);
-            B(i) = f4_func(x(i+1), f4_expr);
+            A(i, i) = f1_func(x(i+1), f2_expr);
+            A(i-1, i) = f1_func(x(i+1), f3_expr);
+            B(i) = f1_func(x(i+1), f4_expr);
         end
 
-        B(1) = f4_func(x(2), f4_expr) - (f1_func(x, f1_expr) * y0);
+        B(1) = f1_func(x(2), f4_expr) - (f1_func(x, f1_expr) * y0);
                
         printf('\nMatriz de coeficientes A:\n');
         disp(A);
@@ -49,14 +49,14 @@ function resolver_EDO(h, a, b, y0, yf, f1, f2, f3, f4, f1_expr, f2_expr, f3_expr
     else
         printf("\n__________Resolvendo Problema de Valor de Contorno__________\n");
         
-         A(1, 1) = f2_func(x(2), f2_expr); 
-         B(n) = f4_func(x(n+1), f4_expr) - (f3_func(x, f3_expr) * yf);
+         A(1, 1) = f1_func(x(2), f2_expr); 
+         B(n) = f1_func(x(n+1), f4_expr) - (f1_func(x, f3_expr) * yf);
         
         for i = 2:n
             A(i, i-1) = f1_func(x(i+1), f1_expr);
-            A(i, i) = f2_func(x(i+1), f2_expr);
-            A(i-1, i) = f3_func(x(i+1), f3_expr);
-            B(i-1) = f4_func(x(i), f4_expr);
+            A(i, i) = f1_func(x(i+1), f2_expr);
+            A(i-1, i) = f1_func(x(i+1), f3_expr);
+            B(i-1) = f1_func(x(i), f4_expr);
         end
                
         printf('\nMatriz de coeficientes A:\n');
@@ -90,18 +90,6 @@ endfunction
 
 function f1_val = f1_func(x, expr)
     f1_val = evstr(expr);
-endfunction
-
-function f2_val = f2_func(x, expr)
-    f2_val = evstr(expr);
-endfunction
-
-function f3_val = f3_func(x, expr)
-    f3_val = evstr(expr);
-endfunction
-
-function f4_val = f4_func(x, expr)
-    f4_val = evstr(expr);
 endfunction
 
 // Exemplo 1: PVI
@@ -152,11 +140,11 @@ function menu_EDO()
 
     select opcao
         case 1
-            resolver_EDO(h1, a1, b1, y01, yf1, f1_func, f2_func, f3_func, f4_func, f1_expr1, f2_expr1, f3_expr1, f4_expr1);
+            resolver_EDO(h1, a1, b1, y01, yf1, f1_expr1, f2_expr1, f3_expr1, f4_expr1);
         case 2
-            resolver_EDO(h2, a2, b2, y02, yf2, f1_func, f2_func, f3_func, f4_func, f1_expr2, f2_expr2, f3_expr2, f4_expr2);
+            resolver_EDO(h2, a2, b2, y02, yf2, f1_expr2, f2_expr2, f3_expr2, f4_expr2);
         case 3
-            resolver_EDO(h3, a3, b3, y03, yf3, f1_func, f2_func, f3_func, f4_func, f1_expr3, f2_expr3, f3_expr3, f4_expr3);
+            resolver_EDO(h3, a3, b3, y03, yf3, f1_expr3, f2_expr3, f3_expr3, f4_expr3);
         case 4
             criar_EDO();
         else
@@ -183,7 +171,7 @@ function criar_EDO()
     f3_expr = input("Entre com a expressão para y(i+1): ", "string");
     f4_expr = input("Entre com a expressão que não contém o y: ", "string");
 
-    resolver_EDO(h, a, b, y0, yf, f1_func, f2_func, f3_func, f4_func, f1_expr, f2_expr, f3_expr, f4_expr);
+    resolver_EDO(h, a, b, y0, yf, f1_expr, f2_expr, f3_expr, f4_expr);
 
 endfunction
 
