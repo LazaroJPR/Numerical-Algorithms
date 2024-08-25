@@ -2,6 +2,29 @@ function f1_val = f1_func(x, expr)
     f1_val = evstr(expr);
 endfunction
 
+function x = gauss_solve(A, b)
+    n = size(A, 1);
+    Ab = [A b];
+
+    for i = 1:n-1
+        [max_val, max_row] = max(abs(Ab(i:n, i)));
+        max_row = max_row + i - 1;
+        if max_row ~= i then
+            Ab([i max_row], :) = Ab([max_row i], :);
+        end
+
+        for j = i+1:n
+            m = Ab(j, i) / Ab(i, i);
+            Ab(j, :) = Ab(j, :) - m * Ab(i, :);
+        end
+    end
+
+    x = zeros(n, 1);
+    for i = n:-1:1
+        x(i) = (Ab(i, $) - Ab(i, 1:n) * x) / Ab(i, i);
+    end
+end
+
 function resultado = calculaFx(f_expr, x)
     [nRows, nCols] = size(f_expr);
     resultado = zeros(nRows, 1);
@@ -45,7 +68,8 @@ function metodoDeNewton(f_expr, df_expr, x0, tol)
         printf("\nwx%d:\n", iter);
         disp(wx0);
 
-        x1 = x0 - (wx0 \ fx0);
+        //x1 = x0 - (wx0 \ fx0);
+        x1 = x0 - gauss_solve(wx0, fx0);
         
         printf("\nx%d: \n", iter+1);
         disp(x1);
@@ -95,7 +119,8 @@ function metodoDeNewtonInexato(f_expr, df_expr, x0, tol)
         printf("\nfx%d:\n", iter);
         disp(fx0);
 
-        s = - wx0 \ fx0;
+        //s = - wx0 \ fx0;
+        s = -gauss_solve(wx0,fx0);
         
         printf("\S%d: \n", iter);
         disp(s);
