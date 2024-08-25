@@ -56,7 +56,7 @@ function metodoDeNewton(f_expr, df_expr, x0, tol)
 
         x0 = x1;
         iter = iter + 1;
-        printf("\nfx%d:\n", iter);
+        printf("\nx%d:\n", iter);
         disp(x0);
     end
 
