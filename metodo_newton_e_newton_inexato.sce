@@ -2,28 +2,45 @@ function f1_val = f1_func(x, expr)
     f1_val = evstr(expr);
 endfunction
 
-function x = gauss_solve(A, b)
+function convergente = verificaConvergencia(A)
     n = size(A, 1);
-    Ab = [A b];
-
-    for i = 1:n-1
-        [max_val, max_row] = max(abs(Ab(i:n, i)));
-        max_row = max_row + i - 1;
-        if max_row ~= i then
-            Ab([i max_row], :) = Ab([max_row i], :);
-        end
-
-        for j = i+1:n
-            m = Ab(j, i) / Ab(i, i);
-            Ab(j, :) = Ab(j, :) - m * Ab(i, :);
+    convergente = 1;
+    
+    for i = 1:n
+        soma = sum(abs(A(i, :))) - abs(A(i, i));
+        if abs(A(i, i)) <= soma then
+            convergente = 0;
+            break;
         end
     end
+endfunction
 
-    x = zeros(n, 1);
-    for i = n:-1:1
-        x(i) = (Ab(i, $) - Ab(i, 1:n) * x) / Ab(i, i);
+
+function [x] = jacobi(A,b,x0,TOL,N)
+    nlin = size(A,1);
+    x = zeros(nlin,1);
+
+    k = 1;
+    while (k <= N)
+       
+        for i = 1:nlin
+            x(i) = 0;
+            for j = [1:i-1,i+1:nlin]
+                x(i) = x(i) - A(i,j)*x0(j);
+            end
+            x(i) = (x(i) + b(i))/A(i,i);
+        end
+       
+        if (norm(x-x0,'inf') < TOL) then
+            return x;
+        end
+       
+        k = k+1;
+        x0 = x;
     end
-end
+   
+    disp('Método falhou.')
+endfunction
 
 function resultado = calculaFx(f_expr, x)
     [nRows, nCols] = size(f_expr);
@@ -68,8 +85,14 @@ function metodoDeNewton(f_expr, df_expr, x0, tol)
         printf("\nwx%d:\n", iter);
         disp(wx0);
 
-        //x1 = x0 - (wx0 \ fx0);
-        x1 = x0 - gauss_solve(wx0, fx0);
+       // x1 = x0 - (wx0 \ fx0);
+        if verificaConvergencia(wx0) == 1 then
+            printf("\nA matriz Wx0 converge, aplicando Gauss-Seidel.\n");
+            x1 = gaussSeidel(wx0, -fx0, x0, tol, maxIter);
+        else
+            printf("\nA matriz Wx0 não converge, aplicando método padrão.\n");
+            x1 = x0 - (wx0 \ fx0);
+        end
         
         printf("\nx%d: \n", iter+1);
         disp(x1);
@@ -120,7 +143,13 @@ function metodoDeNewtonInexato(f_expr, df_expr, x0, tol)
         disp(fx0);
 
         //s = - wx0 \ fx0;
-        s = -gauss_solve(wx0,fx0);
+        if verificaConvergencia(wx0)== 1 then
+            printf("\nA matriz Wx0 converge, aplicando Gauss-Seidel.\n");
+            s = gaussSeidel(wx0, -fx0, x0, tol, maxIter); // Função Gauss-Seidel aqui
+        else
+            printf("\nA matriz Wx0 não converge, aplicando método padrão.\n");
+            s = - wx0 \ fx0;
+        end        
         
         printf("\S%d: \n", iter);
         disp(s);
@@ -176,7 +205,6 @@ sistemaC = ["x^2", "x^2", "x^2", "-1";
 derivadaC = ["2*x", "2*x", "2*x";
             "4*x", "2*x", "-4";
             "6*x", "-4", "1"];
-
 
 function menu_Newton()
     printf("\n\n========================================================================");
